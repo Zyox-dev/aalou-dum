@@ -46,8 +46,9 @@
                 init() {
                     this.datatable2 = new simpleDatatables.DataTable('#myTable2', {
                         data: {
-                            headings: ['Type', 'Color Stone Name', 'Rate', 'Karrot', 'Weight',
-                                'Amount', 'Date', 'Action'
+                            headings: ['Type', 'Color Stone Name', 'Rate', 'Carat', 'Weight',
+                                'Total Amount', 'CGST', 'SGST', 'IGST', 'Gross Amount',
+                                'Date', 'Action'
                             ],
                             data: @json($purchases)
                         },

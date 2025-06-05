@@ -18,6 +18,7 @@ class ApprovalOut extends Model
         'rate',
         'qty',
         'gst_percent',
+        'labour_id'
     ];
 
     protected $casts = [
@@ -31,6 +32,12 @@ class ApprovalOut extends Model
     {
         return ApprovalType::from($this->approval_type->value)->label();
     }
+
+    public function labour()
+    {
+        return $this->belongsTo(Labour::class);
+    }
+
 
     // Auto-generate serial number on create
     protected static function booted()

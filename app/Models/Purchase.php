@@ -12,10 +12,13 @@ class Purchase extends Model
     protected $fillable = [
         'purchase_type',
         'rate_per_unit',
-        'karrot',
+        'carat',
         'weight_in_gram',
         'amount_total',
-        'gst_percent',
+        'cgst',
+        'sgst',
+        'igst',
+        'gross_amount',
         'purchase_date',
         'color_stone_name',
     ];

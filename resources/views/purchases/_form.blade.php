@@ -4,27 +4,17 @@
     $editing = isset($purchase);
 @endphp
 
-@if ($errors->any())
-    <div class="mb-4 bg-red-100 border border-red-400 text-red-700 p-3 rounded">
-        <ul class="list-disc list-inside text-sm">
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif
-
 <div x-data="{
     type: '{{ old('purchase_type', $purchase->purchase_type->value ?? '1') }}',
     rate: {{ old('rate_per_unit', $purchase->rate_per_unit ?? 0) }},
-    karrot: {{ old('karrot', $purchase->karrot ?? 0) }},
+    carat: {{ old('carat', $purchase->carat ?? 0) }},
     weight: {{ old('weight_in_gram', $purchase->weight_in_gram ?? 0) }},
     total: 0,
     calculateTotal() {
         if (this.type === '1') {
             this.total = (this.rate * this.weight).toFixed(2);
         } else {
-            this.total = (this.rate * this.karrot).toFixed(2);
+            this.total = (this.rate * this.carat).toFixed(2);
         }
     }
 }" x-init="calculateTotal()" @input.window="calculateTotal()">
@@ -63,10 +53,10 @@
         </div>
 
         <div>
-            <label class="block font-medium">Karrot</label>
-            <input type="number" step="0.01" name="karrot" x-model="karrot" @input="calculateTotal"
+            <label class="block font-medium" x-text="type === '1' ? 'Carat' : 'Carat (Quantity)'"></label>
+            <input type="number" step="0.01" name="carat" x-model="carat" @input="calculateTotal"
                 class="w-full border p-2 rounded" required>
-            @error('karrot')
+            @error('carat')
                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
             @enderror
         </div>
@@ -80,12 +70,37 @@
             @enderror
         </div>
 
-        <div x-show="type === '1'" class="transition-all duration-300">
+        {{-- <div x-show="type === '1'" class="transition-all duration-300">
             <label class="block font-medium">GST (%)</label>
             <input type="number" step="0.01" name="gst_percent"
                 value="{{ old('gst_percent', $purchase->gst_percent ?? '') }}" class="w-full border p-2 rounded">
             @error('gst_percent')
                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+            @enderror
+        </div> --}}
+
+        <div x-show="type === '1'" class="transition-all duration-300">
+            <label for="cgst">CGST (%)</label>
+            <input type="number" name="cgst" step="0.01" value="{{ old('cgst', $purchase->cgst ?? '') }}"
+                class="form-input" />
+            @error('cgst')
+                <span class="text-red-500 text-sm">{{ $message }}</span>
+            @enderror
+        </div>
+        <div x-show="type === '1'" class="transition-all duration-300">
+            <label for="sgst">SGST (%)</label>
+            <input type="number" name="sgst" step="0.01" value="{{ old('sgst', $purchase->sgst ?? '') }}"
+                class="form-input" />
+            @error('sgst')
+                <span class="text-red-500 text-sm">{{ $message }}</span>
+            @enderror
+        </div>
+        <div x-show="type === '1'" class="transition-all duration-300">
+            <label for="igst">IGST (%)</label>
+            <input type="number" name="igst" step="0.01" value="{{ old('igst', $purchase->igst ?? '0') }}"
+                class="form-input" />
+            @error('igst')
+                <span class="text-red-500 text-sm">{{ $message }}</span>
             @enderror
         </div>
 

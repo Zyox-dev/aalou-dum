@@ -15,10 +15,12 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->string('serial_no')->unique(); // auto-generated
             $table->tinyInteger('approval_type');
+            $table->uuid('labour_id');
             $table->date('date');
             $table->decimal('rate', 10, 2);
             $table->decimal('qty', 10, 2); // grams or karrots
-            $table->decimal('gst_percent', 5, 2);
+            // $table->decimal('gst_percent', 5, 2);
+            $table->foreign('labour_id')->references('id')->on('labours')->onDelete('cascade');
             $table->timestamps();
         });
     }

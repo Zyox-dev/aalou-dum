@@ -15,12 +15,16 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->tinyInteger('purchase_type');
             $table->decimal('rate_per_unit', 10, 2);
-            $table->decimal('karrot', 8, 2);
+            $table->decimal('carat', 8, 2);
             $table->decimal('weight_in_gram', 10, 2)->nullable(); // Only for Gold
             $table->decimal('amount_total', 12, 2);
-            $table->decimal('gst_percent', 5, 2)->nullable();     // Only for Gold
             $table->date('purchase_date');
             $table->string('color_stone_name')->nullable();       // Only for Color Stone
+            $table->decimal('cgst', 5, 2)->default(0);
+            $table->decimal('sgst', 5, 2)->default(0);
+            $table->decimal('igst', 5, 2)->default(0);
+            $table->decimal('gross_amount', 10, 2)->default(0);
+
             $table->timestamps();
         });
     }

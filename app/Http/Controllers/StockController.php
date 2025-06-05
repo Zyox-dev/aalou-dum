@@ -19,7 +19,7 @@ class StockController extends Controller
         $stockData = [];
 
         foreach ($types as $type) {
-            $field = $type['value'] === 1 ? 'weight_in_gram' : 'karrot';
+            $field = $type['value'] === 1 ? 'weight_in_gram' : 'carat';
 
             $purchasedQty = Purchase::where('purchase_type', $type['value'])
                 ->sum($field);
@@ -34,7 +34,7 @@ class StockController extends Controller
                 number_format($purchasedQty, 2),        // Purchased
                 number_format($approvedQty, 2),         // Approved
                 number_format($available, 2),           // Available
-                $type['value'] === 1 ? 'Gram' : 'Karrot', // Unit
+                $type['value'] === 1 ? 'Gram' : 'Carat', // Unit
             ];
         }
 
