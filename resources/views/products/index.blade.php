@@ -1,8 +1,11 @@
 <x-layout.default>
     <div class="panel mt-4">
+
         <div class="flex justify-between items-center mb-4">
             <h5 class="font-semibold text-lg dark:text-white-light">Product List</h5>
-            <a href="{{ route('products.create') }}" class="btn btn-primary">Add Product</a>
+            <div class="space-x-2">
+                <a href="{{ route('products.create') }}" class="btn btn-primary">Add Product</a>
+            </div>
         </div>
 
         <div class="overflow-x-auto">
@@ -44,7 +47,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="9" class="p-4 text-center text-gray-600">No products found.</td>
+                            <td colspan="11" class="p-4 text-center text-gray-600">No products found.</td>
                         </tr>
                     @endforelse
                 </tbody>

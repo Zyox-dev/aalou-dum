@@ -229,4 +229,17 @@ class ProductController extends Controller
 
         return redirect()->route('products.index')->with('success', 'Product deleted!');
     }
+
+    public function printTagsIndex()
+    {
+        $products = Product::with('images')->latest()->get();
+        return view('products.print-tag-index', compact('products'));
+    }
+
+    public function printTagsStore(Request $request)
+    {
+        $ids = explode(',', $request->product_ids);
+        $products = Product::whereIn('id', $ids)->get();
+        return view('products.print-tags', compact('products'));
+    }
 }

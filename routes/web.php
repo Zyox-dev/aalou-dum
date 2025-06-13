@@ -12,6 +12,7 @@ use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\ApprovalOutController;
 use App\Http\Controllers\CompanyDataController;
 use App\Http\Controllers\MaterialLedgerController;
+use App\Http\Controllers\InvoiceController;
 
 Route::permanentRedirect('/', '/login');
 
@@ -28,8 +29,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/labours/search', [LabourController::class, 'search']);
     Route::get('/company-data', [CompanyDataController::class, 'edit'])->name('company-data.edit');
     Route::post('/company-data', [CompanyDataController::class, 'update'])->name('company-data.update');
-    Route::resource('products', ProductController::class);
+    Route::resource('products', ProductController::class)->except('show');
     Route::get('/material-ledgers', [MaterialLedgerController::class, 'index'])->name('material-ledgers.index');
+    Route::get('/view-invoice', function () {
+        return view('invoice');
+    });
+
+    Route::get('/invoices/create', [InvoiceController::class, 'create'])->name('invoices.create');
+    Route::post('/invoices', [InvoiceController::class, 'store'])->name('invoices.store');
+    Route::get('/invoices/{invoice}/print', [InvoiceController::class, 'print'])->name('invoices.print');
+    Route::get('/invoices', [InvoiceController::class, 'index'])->name('invoices.index');
+    Route::delete('/invoices/{invoice}', [InvoiceController::class, 'destroy'])->name('invoices.destroy');
+    Route::get('/products/by-code/{code}', [InvoiceController::class, 'getProductDetail'])->name('invoices.getProductDetail');
+    Route::get('/print-product-tag', [ProductController::class, 'printTagsIndex'])->name('products.print-tags-index');
+    Route::post('/print-product-tag', [ProductController::class, 'printTagsStore'])->name('products.print-tags-store');
 });
 
 require __DIR__ . '/auth.php';

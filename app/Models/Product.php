@@ -45,6 +45,11 @@ class Product extends Model
         return $this->hasMany(ProductImage::class);
     }
 
+    public function invoiceItems()
+    {
+        return $this->hasMany(InvoiceItem::class);
+    }
+
     protected static function booted()
     {
         static::creating(function ($model) {

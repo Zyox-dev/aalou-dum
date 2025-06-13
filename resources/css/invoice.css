@@ -1,0 +1,304 @@
+.app {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    background-color: #f0f0f0;
+}
+.tax-invoice {
+    /* width: 210mm; */
+    /* min-height: 297mm; */
+    padding: 20px;
+    margin: 0 auto;
+    background-color: white;
+    /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); */
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    position: relative;
+    box-sizing: border-box;
+    /* border: 1px solid #000; */
+}
+
+.invoice-header {
+    text-align: center;
+    /* border: 1px solid #000; */
+    border-top: 1px solid #000;
+    border-left: 1px solid #000;
+    border-right: 1px solid #000;
+}
+
+.invoice-header h1 {
+    margin: 0;
+    padding: 10px 0;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.invoice-info {
+    display: flex;
+    border: 1px solid #000;
+
+    /* margin-bottom: 15px; */
+    /* border-bottom: 1px solid #000; */
+    /* padding-bottom: 10px; */
+}
+/* .invoice-no {
+    border-top: 1px solid #000;
+    border-left: 1px solid #000;
+    border-right: 1px solid #000;
+    padding-left: 1rem;
+} */
+.invoice-date {
+    border-bottom: 1px solid #000;
+    /* border-left: 1px solid #000;
+    border-right: 1px solid #000; */
+    /* padding-left: 1rem; */
+}
+.company-info {
+    flex: 1;
+    border-right: 1px solid #000;
+
+    /* padding-right: 15px; */
+    /* border: 1px solid #000; */
+}
+.comapny-detail {
+    /* border-top: 1px solid #000;
+    border-left: 1px solid #000; */
+    padding-left: 1rem;
+}
+.company-info h2 {
+    margin: 0 0 5px 0;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.company-info p {
+    margin: 0 0 3px 0;
+    font-size: 11px;
+    white-space: pre-line;
+}
+
+.dispatch-address {
+    /* padding-top: 10px; */
+    font-size: 11px;
+    /* border: 1px solid #000; */
+    /* border-right: 1px solid #000; */
+    /* border-left: 1px solid #000; */
+
+    padding-left: 1rem;
+}
+
+.invoice-details {
+    width: 40%;
+}
+
+/* .ref-no,
+.gstin-no,
+.pan-no,
+.state-code,
+.district-code {
+    border-left: 1px solid #000;
+    border-right: 1px solid #000;
+} */
+/* 
+.district-code {
+    border-bottom: 1px solid #000;
+} */
+.invoice-details table,
+.customer-details table,
+.customer-tax-details table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.invoice-details td,
+.customer-details td,
+.customer-tax-details td {
+    padding: 2px 5px;
+    font-size: 11px;
+    vertical-align: top;
+}
+
+.invoice-details td:first-child,
+.customer-details td:first-child,
+.customer-tax-details td:first-child {
+    font-weight: bold;
+    width: 40%;
+}
+
+.customer-info {
+    display: flex;
+    /* margin-bottom: 15px;
+    border-bottom: 1px solid #000; */
+    /* padding-bottom: 10px; */
+}
+
+.customer-details {
+    flex: 1;
+    padding-right: 15px;
+    border-left: 1px solid #000;
+    border-bottom: 1px solid #000;
+}
+
+.customer-tax-details {
+    width: 40%;
+    border-left: 1px solid #000;
+    border-right: 1px solid #000;
+    border-bottom: 1px solid #000;
+}
+/* 
+.invoice-items {
+    margin-bottom: 15px;
+} */
+
+.invoice-items table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #000;
+}
+
+.invoice-items th {
+    background-color: #f5f5f5;
+    padding: 5px;
+    text-align: left;
+    font-size: 11px;
+    border: 1px solid #000;
+}
+
+.invoice-items td {
+    padding: 5px;
+    border: 1px solid #000;
+    font-size: 11px;
+    vertical-align: top;
+}
+
+.invoice-items .description {
+    width: 30%;
+}
+
+.invoice-items .amount {
+    text-align: right;
+}
+
+.invoice-summary {
+    display: flex;
+    /* margin-bottom: 15px; */
+}
+
+.totals-left {
+    flex: 1;
+    border-left: 1px solid #000;
+    border-bottom: 1px solid #000;
+}
+
+.totals-left table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #000;
+}
+
+.totals-left td {
+    padding: 5px;
+    border: 1px solid #000;
+    font-size: 11px;
+}
+
+.totals-left td:first-child {
+    font-weight: bold;
+}
+
+.bank-details {
+    margin-top: 10px;
+    font-size: 11px;
+    margin-left: 1vh;
+}
+
+.bank-details p {
+    margin: 2px 0;
+}
+
+.tax-summary {
+    width: 30%;
+}
+
+.tax-summary table {
+    width: 100%;
+    border-collapse: collapse;
+    /* border: 1px solid #000; */
+}
+
+.tax-summary td {
+    padding: 5px;
+    /* border: 1px solid #000; */
+    border-right: 1px solid #000;
+    border-left: 1px solid #000;
+    border-bottom: 1px solid #000;
+    font-size: 11px;
+    border-collapse: collapse;
+}
+
+.tax-summary td:last-child {
+    text-align: right;
+}
+
+.grand-total {
+    font-weight: bold;
+}
+
+.amount-in-words {
+    margin-bottom: 15px;
+    font-size: 11px;
+    /* border: 1px solid #000; */
+    border-left: 1px solid #000;
+    border-right: 1px solid #000;
+    border-bottom: 1px solid #000;
+    padding: 1vh;
+}
+
+.delivery-info {
+    margin-bottom: 10px;
+    font-size: 11px;
+}
+
+.gst-declaration {
+    margin-bottom: 15px;
+    font-size: 10px;
+    text-align: justify;
+}
+
+.terms {
+    /* padding: 1px; */
+    margin-top: 10px;
+}
+.invoice-footer {
+    display: flex;
+    margin-top: 20px;
+}
+
+.jurisdiction {
+    flex: 1;
+    font-size: 10px;
+}
+
+.signature {
+    width: 30%;
+    text-align: center;
+    font-size: 11px;
+}
+
+.signature-line {
+    margin: 30px 0 5px 0;
+    border-bottom: 1px solid #000;
+}
+
+.duplicate-copy {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 14px;
+    color: #888;
+    font-style: italic;
+}
