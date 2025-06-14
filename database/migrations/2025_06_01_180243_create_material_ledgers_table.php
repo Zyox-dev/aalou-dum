@@ -17,8 +17,9 @@ return new class extends Migration
             $table->tinyInteger('material_type');
             $table->tinyInteger('entry_type');
             $table->decimal('quantity', 10, 3);
-            $table->uuid('labour_id')->nullable();
+            $table->uuid('labour_id')->nullable()->index();
             $table->uuid('reference_id');
+            $table->string('reference_type');
             $table->string('remarks')->nullable();
             $table->timestamps();
 

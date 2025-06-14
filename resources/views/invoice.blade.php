@@ -24,9 +24,8 @@
         <div class="invoice-info">
             <div class="company-info">
                 <div class="comapny-detail">
-                    <h2>Navya Jewels.</h2>
-                    <p>Daga Sethia Parakh Mohalla</p>
-                    <p>Bikaner -334001</p>
+                    <h2>{{ $storeData->company_name }}</h2>
+                    <p>{{ $storeData->address }}</p>
                     {{-- <p>info@dhaddadiamonds.com</p> --}}
                 </div>
                 <div class="dispatch-address">
@@ -43,7 +42,7 @@
                     <tbody>
                         <tr class="invoice-no">
                             <td>Invoice No :</td>
-                            <td>{{ $invoice->id }}</td>
+                            <td>{{ $invoice->invoice_no }}</td>
                         </tr>
                         <tr class="invoice-date">
                             <td>Date :</td>
@@ -56,19 +55,19 @@
                         </tr>
                         <tr class="gstin-no">
                             <td>GST TIN No :</td>
-                            <td>27AACCD5599J1ZO</td>
+                            <td>{{ $storeData->gstin }}</td>
                         </tr>
                         <tr class="pan-no">
                             <td>PAN No :</td>
-                            <td>AACCD5599J</td>
+                            <td>{{ $storeData->pan_no }}</td>
                         </tr>
                         <tr class="state-code">
                             <td>State Code :</td>
-                            <td>27</td>
+                            <td>{{ $storeData->state_code }}</td>
                         </tr>
                         <tr class="district-code">
                             <td>District Code :</td>
-                            <td>483</td>
+                            <td>{{ $storeData->district_code }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -202,9 +201,9 @@
                     </table> --}}
 
                 <div class="bank-details">
-                    <p>Please Remit to Our Bank A/C No: 0082100100007980,</p>
-                    <p>IFC Code: PUNB0008210,</p>
-                    <p>A/C With: Punjab National Bank, KEM ROAD, DRM circle, Bikaner</p>
+                    <p>Please Remit to Our Bank A/C No: {{ $storeData->bank_account_no }},</p>
+                    <p>IFSC Code: {{ $storeData->bank_ifsc_code }},</p>
+                    <p>A/C With: {{ $storeData->bank_name }}</p>
                 </div>
             </div>
 
@@ -238,8 +237,8 @@
         </div>
 
         <div class="amount-in-words">
-            <p><strong>Amount In Words:</strong> Rupees One Lakh Fifty Thousand Only</p>
-            <p class="terms">Goods Sold And Delivered At: MUMBAI</p>
+            {{-- <p><strong>Amount In Words:</strong> Rupees One Lakh Fifty Thousand Only</p> --}}
+            <p class="terms">Goods Sold And Delivered At: {{ $storeData->city_location }}</p>
             <p class="terms">
                 We hereby certify that our registration certificate under the Goods and Service Tax Act, 2017 is in
                 force on
@@ -293,11 +292,11 @@
         <div class="invoice-footer">
             <div class="jurisdiction">
                 {{-- <p>The Invoice is exclusive of all other taxes and levies which will be collected if applicable</p> --}}
-                <p>Subject to MUMBAI Jurisdiction</p>
+                <p>Subject to {{ $storeData->city_location }} Jurisdiction</p>
             </div>
 
             <div class="signature">
-                <p>For : Navya Jewels</p>
+                <p>For : {{ $storeData->company_name }}</p>
                 <div class="signature-line"></div>
                 <p>Authorized Signatory</p>
             </div>
@@ -309,6 +308,7 @@
     </div>
 
 
+    <div class="page-break"></div>
 
     <div class="tax-invoice">
         <div class="invoice-header">
@@ -318,9 +318,8 @@
         <div class="invoice-info">
             <div class="company-info">
                 <div class="comapny-detail">
-                    <h2>Navya Jewels.</h2>
-                    <p>Daga Sethia Parakh Mohalla</p>
-                    <p>Bikaner -334001</p>
+                    <h2>{{ $storeData->company_name }}</h2>
+                    <p>{{ $storeData->address }}</p>
                     {{-- <p>info@dhaddadiamonds.com</p> --}}
                 </div>
                 <div class="dispatch-address">
@@ -337,7 +336,7 @@
                     <tbody>
                         <tr class="invoice-no">
                             <td>Invoice No :</td>
-                            <td>{{ $invoice->id }}</td>
+                            <td>{{ $invoice->invoice_no }}</td>
                         </tr>
                         <tr class="invoice-date">
                             <td>Date :</td>
@@ -350,19 +349,19 @@
                         </tr>
                         <tr class="gstin-no">
                             <td>GST TIN No :</td>
-                            <td>27AACCD5599J1ZO</td>
+                            <td>{{ $storeData->gstin }}</td>
                         </tr>
                         <tr class="pan-no">
                             <td>PAN No :</td>
-                            <td>AACCD5599J</td>
+                            <td>{{ $storeData->pan_no }}</td>
                         </tr>
                         <tr class="state-code">
                             <td>State Code :</td>
-                            <td>27</td>
+                            <td>{{ $storeData->state_code }}</td>
                         </tr>
                         <tr class="district-code">
                             <td>District Code :</td>
-                            <td>483</td>
+                            <td>{{ $storeData->district_code }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -489,9 +488,9 @@
                     </table> --}}
 
                 <div class="bank-details">
-                    <p>Please Remit to Our Bank A/C No: 0082100100007980,</p>
-                    <p>IFC Code: PUNB0008210,</p>
-                    <p>A/C With: Punjab National Bank, KEM ROAD, DRM circle, Bikaner</p>
+                    <p>Please Remit to Our Bank A/C No: {{ $storeData->bank_account_no }},</p>
+                    <p>IFSC Code: {{ $storeData->bank_ifsc_code }},</p>
+                    <p>A/C With: {{ $storeData->bank_name }}</p>
                 </div>
             </div>
 
@@ -520,8 +519,8 @@
         </div>
 
         <div class="amount-in-words">
-            <p><strong>Amount In Words:</strong> Rupees One Lakh Fifty Thousand Only</p>
-            <p class="terms">Goods Sold And Delivered At: MUMBAI</p>
+            {{-- <p><strong>Amount In Words:</strong> Rupees One Lakh Fifty Thousand Only</p> --}}
+            <p class="terms">Goods Sold And Delivered At: {{ $storeData->city_location }}</p>
             <p class="terms">
                 We hereby certify that our registration certificate under the Goods and Service Tax Act, 2017 is in
                 force on
@@ -575,11 +574,11 @@
         <div class="invoice-footer">
             <div class="jurisdiction">
                 {{-- <p>The Invoice is exclusive of all other taxes and levies which will be collected if applicable</p> --}}
-                <p>Subject to MUMBAI Jurisdiction</p>
+                <p>Subject to {{ $storeData->city_location }} Jurisdiction</p>
             </div>
 
             <div class="signature">
-                <p>For : Navya Jewels</p>
+                <p>For : {{ $storeData->company_name }}</p>
                 <div class="signature-line"></div>
                 <p>Authorized Signatory</p>
             </div>

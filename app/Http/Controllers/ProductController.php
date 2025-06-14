@@ -2,19 +2,35 @@
 
 namespace App\Http\Controllers;
 
+use App\MaterialType;
+use App\Models\Labour;
 use App\Models\Product;
 use App\LedgerEntryType;
-use App\MaterialType;
 use App\Models\CompanyData;
 use App\Models\ProductImage;
 use Illuminate\Http\Request;
 use App\Models\MaterialLedger;
+use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
     public function index()
     {
-        $products = Product::with('images')->latest()->get();
+        $products = Product::latest()->get();
+        $products = $products->map(function ($p) {
+            return [
+                $p->product_no,
+                $p->name,
+                $p->gold_qty ?  $p->gold_qty . "g ( " . $p->gold_carat . " )" : "-",
+                $p->diamond_qty ?? "-",
+                $p->color_stone_qty ?? '-',
+                number_format($p->total_amount, 2),
+                number_format($p->gross_amount, 2),
+                number_format($p->mrp, 2),
+                $p->show_in_frontend ? 'Yes' : 'No',
+                view('products.partials.action-buttons', ['id' => $p->id])->render(),
+            ];
+        });
         return view('products.index', compact('products'));
     }
 
@@ -23,37 +39,59 @@ class ProductController extends Controller
         $carats = explode(',', CompanyData::first()?->carats ?? '');
         $adminPercent = CompanyData::first()?->admin_cost_percent ?? 0;
         $marginPercent = CompanyData::first()?->margin_percent ?? 0;
+        $labours = Labour::orderBy('name')->get();
 
-        return view('products.create', compact('carats', 'adminPercent', 'marginPercent'));
+
+        return view('products.create', compact('carats', 'adminPercent', 'marginPercent', 'labours'));
     }
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
+
+        $validator = Validator::make($request->all(), [
             'name' => 'required|string',
+
             'gold_qty' => 'required|numeric|min:0',
-            'gold_rate' => 'required|numeric|min:0',
-            'gold_carat' => 'required|string',
-
             'diamond_qty' => 'required|numeric|min:0',
-            'diamond_rate' => 'required|numeric|min:0',
-
             'color_stone_qty' => 'required|numeric|min:0',
-            'color_stone_rate' => 'required|numeric|min:0',
 
             'labour_count' => 'required|integer|min:0',
             'labour_rate' => 'required|numeric|min:0',
 
             'description' => 'nullable|string|max:1000',
             'show_in_frontend' => 'nullable|boolean',
-
             'images.*' => 'nullable|image|max:5000',
+
+            'gold_rate' => 'required_if:gold_qty,>0|nullable|numeric|min:0',
+
+            'diamond_rate' => 'required_if:diamond_qty,>0|nullable|numeric|min:0',
+
+            'color_stone_rate' => 'required_if:color_stone_qty,>0|nullable|numeric|min:0',
         ]);
+
+        $validator->sometimes('gold_rate', 'required|numeric|gt:0', fn($input) => $input->gold_qty > 0);
+        $validator->sometimes('gold_carat', 'required|string', fn($input) => $input->gold_qty > 0);
+        $validator->sometimes('gold_labour_id', 'required|exists:labours,id', fn($input) => $input->gold_qty > 0);
+
+        $validator->sometimes('diamond_rate', 'required|numeric|gt:0', fn($input) => $input->diamond_qty > 0);
+        $validator->sometimes('diamond_labour_id', 'required|exists:labours,id', fn($input) => $input->diamond_qty > 0);
+
+        $validator->sometimes('color_stone_rate', 'required|numeric|gt:0', fn($input) => $input->color_stone_qty > 0);
+        $validator->sometimes('color_stone_labour_id', 'required|exists:labours,id', fn($input) => $input->color_stone_qty > 0);
+
+        $validated = $validator->validate();
+
 
         $gold_total = $validated['gold_qty'] * $validated['gold_rate'];
         $diamond_total = $validated['diamond_qty'] * $validated['diamond_rate'];
         $color_stone_total = $validated['color_stone_qty'] * $validated['color_stone_rate'];
         $labour_total = $validated['labour_count'] * $validated['labour_rate'];
+
+        // $gold_total = ($validated['gold_qty'] ?? 0) * ($validated['gold_rate'] ?? 0);
+        // $diamond_total = ($validated['diamond_qty'] ?? 0) * ($validated['diamond_rate'] ?? 0);
+        // $color_stone_total = ($validated['color_stone_qty'] ?? 0) * ($validated['color_stone_rate'] ?? 0);
+        // $labour_total = ($validated['labour_count'] ?? 0) * ($validated['labour_rate'] ?? 0);
+
 
         $total = $gold_total + $diamond_total + $color_stone_total + $labour_total;
 
@@ -89,45 +127,12 @@ class ProductController extends Controller
             'mrp' => $mrp,
             'description' => $validated['description'] ?? null,
             'show_in_frontend' => $request->has('show_in_frontend'),
+
+            'gold_labour_id' => $validated['gold_labour_id'] ?? null,
+            'diamond_labour_id' => $validated['diamond_labour_id'] ?? null,
+            'color_stone_labour_id' => $validated['color_stone_labour_id'] ?? null,
         ]);
-
-
-        if ($product->gold_qty) {
-            MaterialLedger::create([
-                'date' => $product->created_at->toDateString(), // or use a product date field
-                'material_type' => MaterialType::Gold,
-                'entry_type' => LedgerEntryType::ProductIn,
-                'quantity' => $product->gold_qty,
-                'labour_id' => null, // Product me labour nahi linked
-                'reference_id' => $product->id,
-                'remarks' => 'Product In - Gold',
-            ]);
-        }
-
-        if ($product->diamond_qty) {
-            MaterialLedger::create([
-                'date' => $product->created_at->toDateString(),
-                'material_type' => MaterialType::Diamond,
-                'entry_type' => LedgerEntryType::ProductIn,
-                'quantity' => $product->diamond_qty,
-                'labour_id' => null,
-                'reference_id' => $product->id,
-                'remarks' => 'Product In - Diamond',
-            ]);
-        }
-
-        if ($product->color_stone_qty) {
-            MaterialLedger::create([
-                'date' => $product->created_at->toDateString(),
-                'material_type' => MaterialType::ColorStone,
-                'entry_type' => LedgerEntryType::ProductIn,
-                'quantity' => $product->color_stone_qty,
-                'labour_id' => null,
-                'reference_id' => $product->id,
-                'remarks' => 'Product In - Color Stone',
-            ]);
-        }
-
+        MaterialLedger::recordProductIn($product);
 
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $file) {
@@ -145,32 +150,46 @@ class ProductController extends Controller
         $carats = explode(',', CompanyData::first()?->carats ?? '');
         $adminPercent = CompanyData::first()?->admin_cost_percent ?? 0;
         $marginPercent = CompanyData::first()?->margin_percent ?? 0;
+        $labours = Labour::orderBy('name')->get();
 
-        return view('products.edit', compact('product', 'carats', 'adminPercent', 'marginPercent'));
+        return view('products.edit', compact('product', 'carats', 'adminPercent', 'marginPercent', 'labours'));
     }
 
     public function update(Request $request, Product $product)
     {
-        $validated = $request->validate([
+        $validator = Validator::make($request->all(), [
             'name' => 'required|string',
+
             'gold_qty' => 'required|numeric|min:0',
-            'gold_rate' => 'required|numeric|min:0',
-            'gold_carat' => 'required|string',
-
             'diamond_qty' => 'required|numeric|min:0',
-            'diamond_rate' => 'required|numeric|min:0',
-
             'color_stone_qty' => 'required|numeric|min:0',
-            'color_stone_rate' => 'required|numeric|min:0',
 
             'labour_count' => 'required|integer|min:0',
             'labour_rate' => 'required|numeric|min:0',
 
             'description' => 'nullable|string|max:1000',
             'show_in_frontend' => 'nullable|boolean',
-
             'images.*' => 'nullable|image|max:5000',
+
+            'gold_rate' => 'required_if:gold_qty,>0|nullable|numeric|min:0',
+
+            'diamond_rate' => 'required_if:diamond_qty,>0|nullable|numeric|min:0',
+
+            'color_stone_rate' => 'required_if:color_stone_qty,>0|nullable|numeric|min:0',
         ]);
+
+        $validator->sometimes('gold_rate', 'required|numeric|gt:0', fn($input) => $input->gold_qty > 0);
+        $validator->sometimes('gold_carat', 'required|string', fn($input) => $input->gold_qty > 0);
+        $validator->sometimes('gold_labour_id', 'required|exists:labours,id', fn($input) => $input->gold_qty > 0);
+
+        $validator->sometimes('diamond_rate', 'required|numeric|gt:0', fn($input) => $input->diamond_qty > 0);
+        $validator->sometimes('diamond_labour_id', 'required|exists:labours,id', fn($input) => $input->diamond_qty > 0);
+
+        $validator->sometimes('color_stone_rate', 'required|numeric|gt:0', fn($input) => $input->color_stone_qty > 0);
+        $validator->sometimes('color_stone_labour_id', 'required|exists:labours,id', fn($input) => $input->color_stone_qty > 0);
+
+        $validated = $validator->validate();
+
 
         $gold_total = $validated['gold_qty'] * $validated['gold_rate'];
         $diamond_total = $validated['diamond_qty'] * $validated['diamond_rate'];
@@ -210,6 +229,10 @@ class ProductController extends Controller
             'mrp' => $mrp,
             'description' => $validated['description'] ?? null,
             'show_in_frontend' => $request->has('show_in_frontend'),
+
+            'gold_labour_id' => $validated['gold_labour_id'] ?? null,
+            'diamond_labour_id' => $validated['diamond_labour_id'] ?? null,
+            'color_stone_labour_id' => $validated['color_stone_labour_id'] ?? null,
         ]);
 
         if ($request->hasFile('images')) {
@@ -218,7 +241,11 @@ class ProductController extends Controller
                 $product->images()->create(['image_path' => $path]);
             }
         }
+        MaterialLedger::where('reference_id', $product->id)
+            ->where('reference_type', 'App\Models\Product')
+            ->delete();
 
+        MaterialLedger::recordProductIn($product);
         return redirect()->route('products.index')->with('success', 'Product updated successfully!');
     }
 

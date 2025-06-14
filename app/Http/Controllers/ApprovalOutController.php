@@ -5,14 +5,15 @@ namespace App\Http\Controllers;
 namespace App\Http\Controllers;
 
 use App\ApprovalType;
+use App\MaterialType;
 use App\Models\Labour;
 use App\LedgerEntryType;
 use App\Models\Purchase;
-use App\MaterialType;
 use App\Models\ApprovalOut;
 use Illuminate\Http\Request;
 use App\Models\MaterialLedger;
 use Illuminate\Validation\Rules\Enum;
+use Illuminate\Support\Facades\Validator;
 
 class ApprovalOutController extends Controller
 {
@@ -47,16 +48,33 @@ class ApprovalOutController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $validator = Validator::make($request->all(), [
             'approval_type' => ['required', new Enum(ApprovalType::class)],
             'date' => 'required|date',
             'rate' => 'required|numeric',
             'qty' => 'required|numeric',
-            'labour_name' => 'required',
-            'labour_mobile' => 'required'
-            // 'gst_percent' => 'required|numeric',
+            'labour_name' => ['required', 'string', 'max:100'],
+            'labour_mobile' => [
+                'required',
+                'digits:10',
+                function ($attribute, $value, $fail) use ($request) {
+                    $existing = Labour::where('name', $request->labour_name)->first();
+
+                    if (! $existing) {
+                        // If name is new → mobile must not exist
+                        if (Labour::where('mobile', $value)->exists()) {
+                            $fail('This mobile already belongs to another labour.');
+                        }
+                    } else {
+                        // If name exists → mobile must match that labour
+                        if ($existing->mobile !== $value) {
+                            $fail('This mobile does not match the existing labour record.');
+                        }
+                    }
+                }
+            ],
         ]);
-        // dd($request->all());
+        $validated = $validator->validate();
         $validated['labour_id'] = $this->resolveLabour($request);
 
         $purchasedQty = Purchase::where('purchase_type', $validated['approval_type'])
@@ -73,27 +91,7 @@ class ApprovalOutController extends Controller
 
 
         $approval = ApprovalOut::create($validated);
-        $remark = 'Approval Out';
-        switch ($approval->approval_type) {
-            case 1:
-                $remark = 'Approval Out - Gold';
-                break;
-            case 2:
-                $remark = 'Approval Out - Diamond';
-                break;
-            case 3:
-                $remark = 'Approval Out - Color Stone';
-                break;
-        }
-        MaterialLedger::create([
-            'date' => $approval->date,
-            'material_type' => $approval->approval_type->value,
-            'entry_type' => LedgerEntryType::ApprovalOut,
-            'quantity' => $approval->qty,
-            'labour_id' => $approval->labour_id,
-            'reference_id' => $approval->id,
-            'remarks' => $remark,
-        ]);
+        MaterialLedger::recordApprovalOut($approval);
 
         return redirect()->route('approval-outs.index')->with('success', 'Approval Out created successfully.');
     }
@@ -109,13 +107,33 @@ class ApprovalOutController extends Controller
 
     public function update(Request $request, ApprovalOut $approval_out)
     {
-        $validated = $request->validate([
+        $validator = Validator::make($request->all(), [
             'approval_type' => ['required', new Enum(ApprovalType::class)],
             'date' => 'required|date',
             'rate' => 'required|numeric',
             'qty' => 'required|numeric',
-            // 'gst_percent' => 'required|numeric',
+            'labour_name' => ['required', 'string', 'max:100'],
+            'labour_mobile' => [
+                'required',
+                'digits:10',
+                function ($attribute, $value, $fail) use ($request) {
+                    $existing = Labour::where('name', $request->labour_name)->first();
+
+                    if (! $existing) {
+                        // If name is new → mobile must not exist
+                        if (Labour::where('mobile', $value)->exists()) {
+                            $fail('This mobile already belongs to another labour.');
+                        }
+                    } else {
+                        // If name exists → mobile must match that labour
+                        if ($existing->mobile !== $value) {
+                            $fail('This mobile does not match the existing labour record.');
+                        }
+                    }
+                }
+            ],
         ]);
+        $validated = $validator->validate();
         $validated['labour_id'] = $this->resolveLabour($request);
 
         $purchasedQty = Purchase::where('purchase_type', $validated['approval_type'])
@@ -133,7 +151,11 @@ class ApprovalOutController extends Controller
 
 
         $approval_out->update($validated);
+        MaterialLedger::where('reference_id', $approval_out->id)
+            ->where('reference_type', 'App\Models\ApprovalOut')
+            ->delete();
 
+        MaterialLedger::recordApprovalOut($approval_out);
         return redirect()->route('approval-outs.index')->with('success', 'Approval Out updated successfully.');
     }
 

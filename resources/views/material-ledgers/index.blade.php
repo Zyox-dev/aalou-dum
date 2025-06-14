@@ -1,90 +1,120 @@
 <x-layout.default>
-
     <div class="panel mt-6">
-        <h5 class="font-semibold text-lg mb-4">📒 Material Ledger</h5>
+        <h5 class="font-semibold text-lg mb-4 dark:text-white-light">Ledger</h5>
 
-        {{-- ✅ Summary Cards --}}
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-            <div class="p-4 bg-white rounded shadow">
-                <div class="text-sm text-gray-500">Total Purchase</div>
-                <div class="text-xl font-bold">{{ $summary['total_purchase'] }} gm/ct</div>
-            </div>
-            <div class="p-4 bg-white rounded shadow">
-                <div class="text-sm text-gray-500">Total Approval Out</div>
-                <div class="text-xl font-bold">{{ $summary['total_out'] }} gm/ct</div>
-            </div>
-            <div class="p-4 bg-white rounded shadow">
-                <div class="text-sm text-gray-500">Total Received (In)</div>
-                <div class="text-xl font-bold">{{ $summary['total_in'] }} gm/ct</div>
-            </div>
-            <div class="p-4 bg-white rounded shadow">
-                <div class="text-sm text-gray-500">With Labour / In Inventory</div>
-                <div class="text-xl font-bold">
-                    {{ $summary['with_labour'] }} / {{ $summary['in_inventory'] }}
+        <!-- Filters (same as before) -->
+        @include('material-ledgers._filters', ['labours' => $labours])
+
+        <!-- Double Entry Table -->
+        <div class="overflow-x-auto">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Debit (Jama) -->
+                <div>
+                    <h6 class="font-semibold mb-2">Receipt / Jama</h6>
+                    <table class="table-auto w-full border">
+                        <thead class="bg-gray-200">
+                            <tr>
+                                <th class="p-2">Date</th>
+                                <th class="p-2">Narration</th>
+                                <th class="p-2">Material Type</th>
+                                <th class="p-2 text-right">quantity</th>
+                                <th class="p-2 text-right">Amount</th>
+                                <th class="p-2">Labour</th>
+                                {{-- <th class="p-2">Ref</th> --}}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @php $debitTotal = 0; @endphp
+                            @foreach ($ledgers->filter(fn($e) => in_array($e->entry_type->value, [1, 3])) as $entry)
+                                @php $debitTotal += $entry->quantity; @endphp
+                                @php
+                                    $amount = match ($entry->entry_type->value) {
+                                        1 => $entry->reference->gross_amount,
+                                        2 => $entry->reference->rate * $entry->reference->rate,
+                                        3 => $entry->reference->gross_amount,
+                                        4 => $entry->reference->total_amount,
+                                    };
+                                @endphp
+
+                                <tr class="border-t">
+                                    <td class="p-2">{{ $entry->date->format('d-m-Y') }}</td>
+                                    <td class="p-2">{{ $entry->entry_type->label() }}</td>
+                                    <td class="p-2">{{ $entry->material_type->label() }}</td>
+                                    <td class="p-2 text-right">
+                                        {{ number_format($entry->quantity, 2) . ' ' . $entry->material_type->unit() }}
+                                    </td>
+                                    <td class="p-2">{{ $amount }}</td>
+                                    <td class="p-2">{{ $entry->labour?->name }}</td>
+                                    {{-- <td class="p-2">{{ $entry->reference?->reference_no ?? '—' }}</td> --}}
+                                </tr>
+                            @endforeach
+                            <tr class="font-semibold border-t">
+                                <td colspan="3" class="p-2 text-right">Total</td>
+                                <td colspan="2" class="p-2 text-right">
+                                    {{ number_format($debitTotal, 2) . ' Gram / Carat' }}</td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Credit (Udhar) -->
+                <div>
+                    <h6 class="font-semibold mb-2">Issue / Udhar</h6>
+                    <table class="table-auto w-full border">
+                        <thead class="bg-gray-200">
+                            <tr>
+                                <th class="p-2">Date</th>
+                                <th class="p-2">Narration</th>
+                                <th class="p-2">Material Type</th>
+
+                                <th class="p-2 text-right">Quantity</th>
+                                <th class="p-2 text-right">Amount</th>
+                                <th class="p-2">Labour</th>
+                                {{-- <th class="p-2">Ref</th> --}}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @php $creditTotal = 0; @endphp
+
+                            @foreach ($ledgers->filter(fn($e) => in_array($e->entry_type->value, [2, 4])) as $entry)
+                                @php $creditTotal += $entry->quantity; @endphp
+                                @php
+                                    $amount = match ($entry->entry_type->value) {
+                                        1 => $entry->reference->gross_amount,
+                                        2 => $entry->reference->rate * $entry->reference->rate,
+                                        3 => $entry->reference->gross_amount,
+                                        4 => $entry->reference->total_amount,
+                                    };
+                                @endphp
+                                <tr class="border-t">
+                                    <td class="p-2">{{ $entry->date->format('d-m-Y') }}</td>
+                                    <td class="p-2">{{ $entry->entry_type->label() }}</td>
+                                    <td class="p-2">{{ $entry->material_type->label() }}</td>
+
+                                    <td class="p-2 text-right">
+                                        {{ number_format($entry->quantity, 2) . ' ' . $entry->material_type->unit() }}
+                                    </td>
+                                    <td class="p-2">{{ $amount }}</td>
+                                    <td class="p-2">{{ $entry->labour?->name }}</td>
+                                    {{-- <td class="p-2">{{ $entry->reference?->reference_no ?? '—' }}</td> --}}
+                                </tr>
+                            @endforeach
+                            <tr class="font-semibold border-t">
+                                <td colspan="3" class="p-2 text-right">Total</td>
+                                <td colspan="2" class="p-2 text-right">
+                                    {{ number_format($creditTotal, 2) . ' Gram / Carat' }}</td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
+
+            <!-- Balance Summary -->
+            <div class="mt-6 text-right font-bold text-lg">
+                Net Balance = {{ number_format($debitTotal - $creditTotal, 2) }}
+            </div>
         </div>
-        {{-- ✅ Filters --}}
-        <form method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            <select name="material_type" class="form-select">
-                <option value="">All Materials</option>
-                @foreach ($materialTypes as $type)
-                    <option value="{{ $type->value }}" {{ $request->material_type == $type->value ? 'selected' : '' }}>
-                        {{ $type->label() }}
-                    </option>
-                @endforeach
-            </select>
-
-            <select name="labour_id" class="form-select">
-                <option value="">All Labours</option>
-                @foreach ($labours as $labour)
-                    <option value="{{ $labour->id }}" {{ $request->labour_id == $labour->id ? 'selected' : '' }}>
-                        {{ $labour->name }}
-                    </option>
-                @endforeach
-            </select>
-
-            <input type="date" name="from_date" value="{{ $request->from_date }}" class="form-input"
-                placeholder="From Date">
-            <input type="date" name="to_date" value="{{ $request->to_date }}" class="form-input"
-                placeholder="To Date">
-
-            <button class="btn btn-primary col-span-1 md:col-span-4 w-full">Apply Filters</button>
-        </form>
-        {{-- ✅ Ledger Table --}}
-        <div class="overflow-auto">
-            <table class="table-auto w-full border">
-                <thead class="bg-gray-100 text-left">
-                    <tr>
-                        <th class="p-2">Date</th>
-                        <th class="p-2">Material</th>
-                        <th class="p-2">Entry Type</th>
-                        <th class="p-2">Quantity</th>
-                        <th class="p-2">Labour</th>
-                        <th class="p-2">Remarks</th>
-                        <th class="p-2">Reference</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse ($ledgers as $ledger)
-                        <tr class="border-b">
-                            <td class="p-2">{{ $ledger->date }}</td>
-                            <td class="p-2">{{ $ledger->material_type->label() }}</td>
-                            <td class="p-2">{{ $ledger->entry_type->label() }}</td>
-                            <td class="p-2">{{ $ledger->quantity }}</td>
-                            <td class="p-2">{{ $ledger->labour?->name ?? '-' }}</td>
-                            <td class="p-2">{{ $ledger->remarks ?? '-' }}</td>
-                            <td class="p-2 text-xs">{{ $ledger->reference_id }}</td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="7" class="text-center p-4">No records found.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-
     </div>
-
 </x-layout.default>

@@ -72,17 +72,7 @@ class PurchaseController extends Controller
         $validated['gross_amount'] = $validated['amount_total'] + ($validated['amount_total'] * $totalGstPercent / 100);
 
         $purchase = Purchase::create($validated);
-        // dd($purchase->purchase_type->value);
-        MaterialLedger::create([
-            'date' => $purchase->purchase_date,
-            'material_type' => $purchase->purchase_type->value,
-            'entry_type' => LedgerEntryType::Purchase,
-            'quantity' => $validated['purchase_type'] === '1' ? $validated['weight_in_gram'] : $validated['carat'],
-            'labour_id' => null, // no labour in purchase
-            'reference_id' => $purchase->id,
-            'remarks' => 'Purchase entry',
-        ]);
-
+        MaterialLedger::recordPurchase($purchase);
         return redirect()->route('purchases.index')->with('success', 'Purchase added!');
     }
 
@@ -125,6 +115,11 @@ class PurchaseController extends Controller
         $validated['gross_amount'] = $validated['amount_total'] + ($validated['amount_total'] * $totalGstPercent / 100);
 
         $purchase->update($validated);
+        MaterialLedger::where('reference_id', $purchase->id)
+            ->where('reference_type', 'App\Models\Purchase')
+            ->delete();
+
+        MaterialLedger::recordPurchase($purchase);
         return redirect()->route('purchases.index')->with('success', 'Purchase updated!');
     }
 

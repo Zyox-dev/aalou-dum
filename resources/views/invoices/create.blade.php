@@ -1,11 +1,6 @@
 <x-layout.default>
-    <div class="p-4" x-data="invoiceForm()">
-        <div class="text-lg font-semibold mb-4">Create Invoice</div>
-
-        @if ($errors->any())
-            <div class="mb-4 text-red-600 font-medium">Please fix the errors below.</div>
-        @endif
-
+    <div class="panel mt-4" x-data="invoiceForm()">
+        <h5 class="font-semibold text-lg dark:text-white-light mb-4">Create Invoice</h5>
         <form method="POST" action="{{ route('invoices.store') }}">
             @csrf
 
@@ -83,28 +78,36 @@
                 <label class="block mb-2 font-medium">Invoice Items</label>
 
                 <template x-for="(item, index) in items" :key="index">
-                    <div class="grid grid-cols-5 gap-2 items-center mb-2">
-                        <input type="text" x-model="item.product_code" @change="fetchProduct(index)"
-                            :name="'items[' + index + '][product_code]'" class="form-input" placeholder="Product Code"
-                            required>
+                    <div class="grid grid-cols-6 gap-2 items-center mb-2">
+                        <select :name="'items[' + index + '][product_code]'" x-model="item.product_code"
+                            @change="fetchProduct(index)" class="form-select">
+                            <option value="">Select Product</option>
+                            <template x-for="p in allProducts" :key="p.product_no">
+                                <option :value="p.product_no" x-text="p.product_no + ' - ' + p.name"></option>
+                            </template>
+                        </select>
 
-                        <input type="text" x-model="item.product_name" :name="'items[' + index + '][product_name]'"
-                            class="form-input bg-gray-100" placeholder="Product Name" readonly>
+                        <input type="text" :name="'items[' + index + '][product_name]'" x-model="item.product_name"
+                            class="form-input bg-gray-100" readonly>
 
-                        <input type="number" x-model="item.quantity" @input="updateTotal(index)"
-                            :name="'items[' + index + '][quantity]'" class="form-input" placeholder="Qty" min="0.01"
-                            step="0.01" required>
+                        <input type="number" :name="'items[' + index + '][quantity]'" x-model="item.quantity"
+                            @input="updateTotal(index)" class="form-input" min="0.01" step="0.01">
 
-                        <input type="text" x-model="item.rate" :name="'items[' + index + '][rate]'"
-                            class="form-input bg-gray-100" placeholder="Rate" readonly>
+                        <input type="text" :name="'items[' + index + '][rate]'" x-model="item.rate"
+                            class="form-input bg-gray-100" readonly>
 
-                        <input type="text" x-model="item.total" :name="'items[' + index + '][total]'"
-                            class="form-input bg-gray-100" placeholder="Total" readonly>
+                        <input type="text" :name="'items[' + index + '][total]'" x-model="item.total"
+                            class="form-input bg-gray-100" readonly>
+
+                        <button type="button" @click="removeItem()" class="text-red-600 font-bold"
+                            x-show="items.length > 0">✕</button>
                     </div>
                 </template>
 
-                <button type="button" @click="addItem()"
-                    class="mt-2 px-4 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">+ Add Item</button>
+                <div class="flex items-center gap-4 mt-2">
+                    <button type="button" @click="addItem()"
+                        class="px-4 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">+ Add Item</button>
+                </div>
             </div>
 
             {{-- Totals --}}
@@ -140,7 +143,9 @@
                 cgst: {{ old('cgst_percent', 0) }},
                 sgst: {{ old('sgst_percent', 0) }},
                 igst: {{ old('igst_percent', 0) }},
-                items: [],
+                items: @json(old('items', [])),
+                allProducts: @json($serials),
+
                 get subtotal() {
                     return this.items.reduce((sum, item) => sum + (parseFloat(item.total) || 0), 0);
                 },
@@ -160,17 +165,17 @@
                         total: 0
                     });
                 },
+                removeItem() {
+                    if (this.items.length > 0) this.items.pop();
+                },
                 fetchProduct(index) {
                     const code = this.items[index].product_code;
-                    fetch(`/products/by-code/${code}`)
-                        .then(res => res.json())
-                        .then(data => {
-                            if (data && data.name) {
-                                this.items[index].product_name = data.name;
-                                this.items[index].rate = data.mrp;
-                                this.updateTotal(index);
-                            }
-                        });
+                    const product = this.allProducts.find(p => p.product_no === code);
+                    if (product) {
+                        this.items[index].product_name = product.name;
+                        this.items[index].rate = product.mrp;
+                        this.updateTotal(index);
+                    }
                 },
                 updateTotal(index) {
                     const item = this.items[index];

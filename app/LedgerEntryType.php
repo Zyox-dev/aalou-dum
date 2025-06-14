@@ -4,16 +4,18 @@ namespace App;
 
 enum LedgerEntryType: int
 {
-    case Purchase = 0;
-    case ApprovalOut = 1;
-    case ProductIn = 2;
+    case PURCHASE = 1;
+    case APPROVAL_OUT = 2;
+    case APPROVAL_IN = 3;
+    case SALE = 4;
 
     public function label(): string
     {
         return match ($this) {
-            self::Purchase => 'Purchase',
-            self::ApprovalOut => 'Approval Out',
-            self::ProductIn => 'Product In',
+            self::PURCHASE => 'Purchase',
+            self::APPROVAL_OUT => 'Approval Out',
+            self::APPROVAL_IN => 'Approval In',
+            self::SALE => 'Sale',
         };
     }
 }

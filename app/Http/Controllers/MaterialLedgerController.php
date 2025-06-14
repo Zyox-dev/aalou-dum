@@ -2,56 +2,60 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Labour;
-use App\LedgerEntryType;
-use App\MaterialType;
 use Illuminate\Http\Request;
 use App\Models\MaterialLedger;
+use App\Models\Labour;
+use App\MaterialType;
+use Carbon\Carbon;
 
 class MaterialLedgerController extends Controller
 {
 
     public function index(Request $request)
     {
-        $material_type = $request->material_type;
-        $labour_id = $request->labour_id;
-        $from = $request->from_date;
-        $to = $request->to_date;
+        $query = MaterialLedger::query()
+            ->with(['labour', 'reference'])
+            ->orderBy('date')
+            ->orderBy('created_at');
 
-        $ledgers = MaterialLedger::with('labour')
-            ->when(
-                $material_type !== null,
-                fn($q) =>
-                $q->where('material_type', $material_type)
-            )
-            ->when(
-                $labour_id,
-                fn($q) =>
-                $q->where('labour_id', $labour_id)
-            )
-            ->when(
-                $from && $to,
-                fn($q) =>
-                $q->whereBetween('date', [$from, $to])
-            )
-            ->orderBy('date', 'desc')
-            ->get();
+        // ✅ Filters
+        $date = Carbon::today()->subDay();
+        if ($request->filled('material_type')) {
+            $query->where('material_type', $request->material_type);
+        }
 
+        if ($request->filled('labour_id')) {
+            $query->where('labour_id', $request->labour_id);
+        }
+
+        if ($request->filled('from_date')) {
+            $query->where('date', '>=', $request->from_date);
+        } else {
+            $query->where('date', '>=', $date);
+        }
+
+        if ($request->filled('to_date')) {
+            $query->where('date', '<=', $request->to_date);
+        } else {
+            $query->where('date', '<=', $date);
+        }
+
+        $ledgers = $query->get();
+
+        // ✅ Summary values
         $summary = [
-            'total_purchase' => $ledgers->where('entry_type', LedgerEntryType::Purchase)->sum('quantity'),
-            'total_out'      => $ledgers->where('entry_type', LedgerEntryType::ApprovalOut)->sum('quantity'),
-            'total_in'       => $ledgers->where('entry_type', LedgerEntryType::ProductIn)->sum('quantity'),
+            'total_purchase' => $ledgers->where('entry_type', \App\LedgerEntryType::PURCHASE)->sum('quantity'),
+            'total_out' => $ledgers->where('entry_type', \App\LedgerEntryType::APPROVAL_OUT)->sum('quantity'),
+            'total_in' => $ledgers->where('entry_type', \App\LedgerEntryType::APPROVAL_IN)->sum('quantity'),
+            'with_labour' => $ledgers->where('entry_type', \App\LedgerEntryType::APPROVAL_OUT)->sum('quantity') -
+                $ledgers->where('entry_type', \App\LedgerEntryType::APPROVAL_IN)->sum('quantity'),
+            'in_inventory' => $ledgers->where('entry_type', \App\LedgerEntryType::PURCHASE)->sum('quantity') -
+                $ledgers->where('entry_type', \App\LedgerEntryType::APPROVAL_OUT)->sum('quantity'),
         ];
 
-        $summary['with_labour']  = $summary['total_out'] - $summary['total_in'];
-        $summary['in_inventory'] = $summary['total_purchase'] - $summary['total_out'];
+        $materialTypes = MaterialType::cases();
+        $labours = Labour::orderBy('name')->get();
 
-        return view('material-ledgers.index', [
-            'ledgers' => $ledgers,
-            'labours' => Labour::all(),
-            'summary' => $summary,
-            'materialTypes' => MaterialType::cases(),
-            'request' => $request,
-        ]);
+        return view('material-ledgers.index', compact('ledgers', 'labours', 'materialTypes', 'summary', 'request'));
     }
 }

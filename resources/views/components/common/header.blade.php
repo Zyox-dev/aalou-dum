@@ -3,7 +3,7 @@
         <div class="relative bg-white flex w-full items-center px-5 py-2.5 dark:bg-[#0e1726]">
             <div class="horizontal-logo flex lg:hidden justify-between items-center ltr:mr-2 rtl:ml-2">
                 <a href="/" class="main-logo flex items-center shrink-0">
-                    <img class="w-8 ltr:-ml-1 rtl:-mr-1 inline" src="/assets/images/logo.png" alt="image" />
+                    <img class="w-40 ltr:-ml-1 rtl:-mr-1 inline" src="/assets/images/logo.png" alt="image" />
                 </a>
 
                 <a href="javascript:;"
@@ -118,7 +118,7 @@
                                         d="M20 17.5C20 19.9853 20 22 12 22C4 22 4 19.9853 4 17.5C4 15.0147 7.58172 13 12 13C16.4183 13 20 15.0147 20 17.5Z"
                                         stroke="currentColor" stroke-width="1.5" />
                                 </svg>
-                                Company Profile</a>
+                                Store Detail</a>
                         </li>
                         <li class="border-t border-white-light dark:border-white-light/10">
                             <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">

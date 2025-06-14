@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\ApprovalType;
 use App\UuidGenerator;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 
 class ApprovalOut extends Model
@@ -44,16 +45,20 @@ class ApprovalOut extends Model
     {
         static::creating(function ($model) {
             $prefix = strtoupper(substr($model->approval_type_label, 0, 3)); // GOL, DIA, COL
-            $year = now()->format('Y');
-            $month = now()->format('m');
+            $yearMonth = now()->format('Y-m'); // e.g. "2025-06"
 
-            // Count existing records for same type, year, and month
-            $count = static::where('approval_type', $model->approval_type)
-                ->whereYear('created_at', $year)
-                ->whereMonth('created_at', $month)
-                ->count() + 1;
+            DB::transaction(function () use ($model, $prefix, $yearMonth) {
+                $tracker = ApprovalSerialTracker::lockForUpdate()->firstOrCreate([
+                    'approval_type' => $model->approval_type,
+                    'year_month' => $yearMonth,
+                ]);
 
-            $model->serial_no = "{$prefix}-{$year}-{$month}-" . str_pad($count, 5, '0', STR_PAD_LEFT);
+                $tracker->last_number += 1;
+                $tracker->save();
+
+                $serial = str_pad($tracker->last_number, 5, '0', STR_PAD_LEFT);
+                $model->serial_no = "{$prefix}-{$yearMonth}-{$serial}";
+            });
         });
     }
 }

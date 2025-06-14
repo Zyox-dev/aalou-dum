@@ -18,6 +18,9 @@ return new class extends Migration
             $table->string('gstin')->nullable();
             $table->string('pan_no')->nullable();
             $table->string('logo')->nullable();
+            $table->string('state_code')->nullable();
+            $table->string('district_code')->nullable();
+            $table->string('city_location')->nullable();
             $table->decimal('admin_cost_percent', 5, 2)->default(0);
             $table->decimal('margin_percent', 5, 2)->default(0);
             $table->text('carats')->nullable(); // comma-separated: "18K,20K,22K,24K"

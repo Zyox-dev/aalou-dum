@@ -170,47 +170,92 @@
             <label>MRP (+{{ $marginPercent }}%)</label>
             <input type="text" :value="mrp" name="mrp" class="form-input bg-gray-100" readonly>
         </div>
-    </div>
-    <div class="grid  gap-4">
-        <div class="md:col-span-2">
-            <label>Product Name</label>
-            <input name="name" class="form-input" value={{ old('name', $product->name ?? '') }}>
-            @error('name')
-                <span class="text-red-500 text-sm">{{ $message }}</span>
-            @enderror
-        </div>
-        <!-- Description -->
-        <div class="md:col-span-2">
-            <label>Description (optional)</label>
-            <textarea name="description" class="form-input">{{ old('description', $product->description ?? '') }}</textarea>
-            @error('description')
-                <span class="text-red-500 text-sm">{{ $message }}</span>
-            @enderror
-        </div>
-
-        <!-- Images -->
-        <div class="md:col-span-2">
-            <label>Product Images (optional)</label>
-            <input type="file" name="images[]" multiple accept="image/*" class="form-input">
-            @error('images')
+        <div x-show="gold_qty > 0">
+            <label>Gold Labour</label>
+            <select name="gold_labour_id" class="form-input">
+                <option value="">Select Labour</option>
+                @foreach ($labours as $labour)
+                    <option value="{{ $labour->id }}" @selected(old('gold_labour_id', $product->gold_labour_id ?? '') == $labour->id)>
+                        {{ $labour->name }} (+91 {{ $labour->mobile }})
+                    </option>
+                @endforeach
+            </select>
+            @error('gold_labour_id')
                 <span class="text-red-500 text-sm">{{ $message }}</span>
             @enderror
         </div>
 
-        <!-- Show In Frontend -->
-        <div class="md:col-span-2">
-            <label class="inline-flex items-center">
-                <input type="checkbox" name="show_in_frontend" value="1" class="form-checkbox"
-                    {{ old('show_in_frontend', $product->show_in_frontend ?? false) ? 'checked' : '' }}>
-                <span class="ml-2">Show in Frontend</span>
-            </label>
+        <div x-show="diamond_qty > 0">
+            <label>Diamond Labour</label>
+            <select name="diamond_labour_id" class="form-input">
+                <option value="">Select Labour</option>
+                @foreach ($labours as $labour)
+                    <option value="{{ $labour->id }}" @selected(old('diamond_labour_id', $product->diamond_labour_id ?? '') == $labour->id)>
+                        {{ $labour->name }} (+91 {{ $labour->mobile }})
+                    </option>
+                @endforeach
+            </select>
+            @error('diamond_labour_id')
+                <span class="text-red-500 text-sm">{{ $message }}</span>
+            @enderror
         </div>
 
+        <div x-show="color_stone_qty > 0">
+            <label>Color Stone Labour</label>
+            <select name="color_stone_labour_id" class="form-input">
+                <option value="">Select Labour</option>
+                @foreach ($labours as $labour)
+                    <option value="{{ $labour->id }}" @selected(old('color_stone_labour_id', $product->color_stone_labour_id ?? '') == $labour->id)>
+                        {{ $labour->name }} (+91 {{ $labour->mobile }})
+                    </option>
+                @endforeach
+            </select>
+            @error('color_stone_labour_id')
+                <span class="text-red-500 text-sm">{{ $message }}</span>
+            @enderror
+        </div>
     </div>
 
-    <div class="mt-6">
-        <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded">
-            {{ $editing ? 'Update' : 'Save' }}
-        </button>
+</div>
+<div class="grid  gap-4">
+    <div class="md:col-span-2">
+        <label>Product Name</label>
+        <input name="name" class="form-input" value={{ old('name', $product->name ?? '') }}>
+        @error('name')
+            <span class="text-red-500 text-sm">{{ $message }}</span>
+        @enderror
     </div>
+    <!-- Description -->
+    <div class="md:col-span-2">
+        <label>Description (optional)</label>
+        <textarea name="description" class="form-input">{{ old('description', $product->description ?? '') }}</textarea>
+        @error('description')
+            <span class="text-red-500 text-sm">{{ $message }}</span>
+        @enderror
+    </div>
+
+    <!-- Images -->
+    <div class="md:col-span-2">
+        <label>Product Images (optional)</label>
+        <input type="file" name="images[]" multiple accept="image/*" class="form-input">
+        @error('images')
+            <span class="text-red-500 text-sm">{{ $message }}</span>
+        @enderror
+    </div>
+
+    <!-- Show In Frontend -->
+    <div class="md:col-span-2">
+        <label class="inline-flex items-center">
+            <input type="checkbox" name="show_in_frontend" value="1" class="form-checkbox"
+                {{ old('show_in_frontend', $product->show_in_frontend ?? false) ? 'checked' : '' }}>
+            <span class="ml-2">Show in Frontend</span>
+        </label>
+    </div>
+
+</div>
+
+<div class="mt-6">
+    <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded">
+        {{ $editing ? 'Update' : 'Save' }}
+    </button>
 </div>

@@ -14,10 +14,13 @@ class CompanyDataSeeder extends Seeder
     public function run(): void
     {
         CompanyData::create([
-            'company_name' => 'Navya Jewellers',
-            'address' => '123 Street, City',
-            'gstin' => 'GST1234567890',
-            'pan_no' => 'PAN1234567',
+            'company_name' => 'Navya Jewels.',
+            'address' => 'Daga Sethia Parakh Mohalla,Bikaner -334001',
+            'gstin' => '27AACCD5599J1ZO',
+            'pan_no' => 'AACCD5599J',
+            'state_code' => '27',
+            'district_code' => '483',
+            'city_location' => 'Bikaner',
             'logo' => null,
             'admin_cost_percent' => 5.00,
             'margin_percent' => 67.00,
