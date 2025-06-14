@@ -38,6 +38,9 @@ class Product extends Model
         'description',
         'show_in_frontend',
         'gold_carat',
+        'gold_labour_id',
+        'diamond_labour_id',
+        'color_stone_labour_id'
     ];
 
     public function images()

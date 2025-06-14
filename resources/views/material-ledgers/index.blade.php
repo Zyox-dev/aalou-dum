@@ -17,8 +17,8 @@
                                 <th class="p-2">Date</th>
                                 <th class="p-2">Narration</th>
                                 <th class="p-2">Material Type</th>
-                                <th class="p-2 text-right">quantity</th>
-                                <th class="p-2 text-right">Amount</th>
+                                <th class="p-2">Quantity</th>
+                                <th class="p-2">Amount</th>
                                 <th class="p-2">Labour</th>
                                 {{-- <th class="p-2">Ref</th> --}}
                             </tr>
@@ -68,8 +68,8 @@
                                 <th class="p-2">Narration</th>
                                 <th class="p-2">Material Type</th>
 
-                                <th class="p-2 text-right">Quantity</th>
-                                <th class="p-2 text-right">Amount</th>
+                                <th class="p-2">Quantity</th>
+                                <th class="p-2">Amount</th>
                                 <th class="p-2">Labour</th>
                                 {{-- <th class="p-2">Ref</th> --}}
                             </tr>

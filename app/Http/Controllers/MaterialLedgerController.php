@@ -37,7 +37,7 @@ class MaterialLedgerController extends Controller
         if ($request->filled('to_date')) {
             $query->where('date', '<=', $request->to_date);
         } else {
-            $query->where('date', '<=', $date);
+            $query->where('date', '<=', Carbon::today());
         }
 
         $ledgers = $query->get();
