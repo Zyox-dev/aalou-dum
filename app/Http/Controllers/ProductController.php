@@ -259,6 +259,25 @@ class ProductController extends Controller
 
     public function printTagsIndex()
     {
+
+        $products = Product::select('id', 'product_no', 'name', 'gold_qty', 'gold_carat', 'diamond_qty', 'color_stone_qty', 'mrp')->get();
+
+        $tableData = $products->map(function ($product) {
+            return [
+                $product->id,
+                $product->product_no,
+                $product->name,
+                $product->gold_qty . 'g (' . $product->gold_carat . ')',
+                $product->diamond_qty . 'ct',
+                $product->color_stone_qty . 'ct',
+                '₹' . number_format($product->mrp, 2),
+            ];
+        });
+
+        return view('products.print-tag-index', [
+            'tableData' => $tableData->values()->toJson(),
+        ]);
+
         $products = Product::with('images')->latest()->get();
         return view('products.print-tag-index', compact('products'));
     }

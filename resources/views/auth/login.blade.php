@@ -18,7 +18,8 @@
                 <div
                     class="relative flex flex-col justify-center rounded-md bg-white/60 backdrop-blur-lg dark:bg-black/50 px-6 lg:min-h-[758px] py-20">
                     <div class="mx-auto w-full max-w-[440px]">
-                        <img class="w-64 ltr:-ml-1 rtl:-mr-1 inline" src="/assets/images/logo.png" alt="image" />
+                        <img class="w-48 mb-8 ltr:-ml-1 rtl:-mr-1 inline" src="/assets/images/logo_2.png"
+                            alt="image" />
 
                         <div class="mb-10">
                             <h1 class="text-3xl font-extrabold uppercase !leading-snug text-primary md:text-4xl">Sign in
