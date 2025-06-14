@@ -1,17 +1,8 @@
 <x-layout.default>
     <script defer src="/assets/js/apexcharts.js"></script>
     <div x-data="sales">
-        <ul class="flex space-x-2 rtl:space-x-reverse">
-            <li>
-                <a href="javascript:;" class="text-primary hover:underline">Dashboard</a>
-            </li>
-            <li class="before:content-['/'] ltr:before:mr-1 rtl:before:ml-1">
-                <span>Home</span>
-            </li>
-        </ul>
-
         <div class="pt-5">
-            <div class="grid xl:grid-cols-3 gap-6 mb-6">
+            <div class="grid gap-6 mb-6">
                 <div class="panel h-full xl:col-span-2">
                     <div class="flex items-center dark:text-white-light mb-5">
                         <h5 class="font-semibold text-lg">Revenue</h5>
@@ -49,22 +40,6 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="panel h-full">
-                    <div class="flex items-center mb-5">
-                        <h5 class="font-semibold text-lg dark:text-white-light">Sales By Category</h5>
-                    </div>
-                    <div class="overflow-hidden">
-                        <div x-ref="salesByCategory" class="bg-white dark:bg-black rounded-lg">
-                            <!-- loader -->
-                            <div
-                                class="min-h-[353px] grid place-content-center bg-white-light/30 dark:bg-dark dark:bg-opacity-[0.08] ">
-                                <span
-                                    class="animate-spin border-2 border-black dark:border-white !border-l-transparent  rounded-full w-5 h-5 inline-flex"></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -77,8 +52,10 @@
                     isRtl = this.$store.app.rtlClass === "rtl" ? true : false;
 
                     const revenueChart = null;
-                    const salesByCategory = null;
+                    // const salesByCategory = null;
                     let purchaseChart = @json($purchaseChart);
+                    console.log(purchaseChart);
+
 
                     // revenue
                     setTimeout(() => {
@@ -88,10 +65,10 @@
                         this.revenueChart.render()
 
                         // sales by category
-                        this.salesByCategory = new ApexCharts(this.$refs.salesByCategory, this
-                            .salesByCategoryOptions)
-                        this.$refs.salesByCategory.innerHTML = "";
-                        this.salesByCategory.render()
+                        // this.salesByCategory = new ApexCharts(this.$refs.salesByCategory, this
+                        //     .salesByCategoryOptions)
+                        // this.$refs.salesByCategory.innerHTML = "";
+                        // this.salesByCategory.render()
 
                     }, 300);
 
@@ -255,94 +232,94 @@
                 },
 
                 // sales by category
-                get salesByCategoryOptions() {
-                    let approvalChart = @json($approvalChart);
+                // get salesByCategoryOptions() {
+                //     let approvalChart = @json($approvalChart);
 
-                    return {
-                        series: approvalChart.series,
-                        labels: approvalChart.labels,
-                        chart: {
-                            type: 'donut',
-                            height: 460,
-                            fontFamily: 'Nunito, sans-serif',
-                        },
-                        dataLabels: {
-                            enabled: false
-                        },
-                        stroke: {
-                            show: true,
-                            width: 25,
-                            colors: isDark ? '#0e1726' : '#fff'
-                        },
-                        colors: isDark ? ['#5c1ac3', '#e2a03f', '#e7515a', '#e2a03f'] : ['#e2a03f',
-                            '#5c1ac3', '#e7515a'
-                        ],
-                        legend: {
-                            position: 'bottom',
-                            horizontalAlign: 'center',
-                            fontSize: '14px',
-                            markers: {
-                                width: 10,
-                                height: 10,
-                                offsetX: -2,
-                            },
-                            height: 50,
-                            offsetY: 20,
-                        },
-                        plotOptions: {
-                            pie: {
-                                donut: {
-                                    size: '65%',
-                                    background: 'transparent',
-                                    labels: {
-                                        show: true,
-                                        name: {
-                                            show: true,
-                                            fontSize: '29px',
-                                            offsetY: -10
-                                        },
-                                        value: {
-                                            show: true,
-                                            fontSize: '26px',
-                                            color: isDark ? '#bfc9d4' : undefined,
-                                            offsetY: 16,
-                                            formatter: (val) => {
-                                                return val;
-                                            },
-                                        },
-                                        total: {
-                                            show: true,
-                                            label: 'Total',
-                                            color: '#888ea8',
-                                            fontSize: '29px',
-                                            formatter: (w) => {
-                                                return w.globals.seriesTotals.reduce(function(a,
-                                                    b) {
-                                                    return a + b;
-                                                }, 0);
-                                            },
-                                        },
-                                    },
-                                },
-                            },
-                        },
-                        labels: ['Apparel', 'Sports', 'Others'],
-                        states: {
-                            hover: {
-                                filter: {
-                                    type: 'none',
-                                    value: 0.15,
-                                }
-                            },
-                            active: {
-                                filter: {
-                                    type: 'none',
-                                    value: 0.15,
-                                }
-                            },
-                        }
-                    }
-                },
+                //     return {
+                //         series: approvalChart.series,
+                //         labels: approvalChart.labels,
+                //         chart: {
+                //             type: 'donut',
+                //             height: 460,
+                //             fontFamily: 'Nunito, sans-serif',
+                //         },
+                //         dataLabels: {
+                //             enabled: false
+                //         },
+                //         stroke: {
+                //             show: true,
+                //             width: 25,
+                //             colors: isDark ? '#0e1726' : '#fff'
+                //         },
+                //         colors: isDark ? ['#5c1ac3', '#e2a03f', '#e7515a', '#e2a03f'] : ['#e2a03f',
+                //             '#5c1ac3', '#e7515a'
+                //         ],
+                //         legend: {
+                //             position: 'bottom',
+                //             horizontalAlign: 'center',
+                //             fontSize: '14px',
+                //             markers: {
+                //                 width: 10,
+                //                 height: 10,
+                //                 offsetX: -2,
+                //             },
+                //             height: 50,
+                //             offsetY: 20,
+                //         },
+                //         plotOptions: {
+                //             pie: {
+                //                 donut: {
+                //                     size: '65%',
+                //                     background: 'transparent',
+                //                     labels: {
+                //                         show: true,
+                //                         name: {
+                //                             show: true,
+                //                             fontSize: '29px',
+                //                             offsetY: -10
+                //                         },
+                //                         value: {
+                //                             show: true,
+                //                             fontSize: '26px',
+                //                             color: isDark ? '#bfc9d4' : undefined,
+                //                             offsetY: 16,
+                //                             formatter: (val) => {
+                //                                 return val;
+                //                             },
+                //                         },
+                //                         total: {
+                //                             show: true,
+                //                             label: 'Total',
+                //                             color: '#888ea8',
+                //                             fontSize: '29px',
+                //                             formatter: (w) => {
+                //                                 return w.globals.seriesTotals.reduce(function(a,
+                //                                     b) {
+                //                                     return a + b;
+                //                                 }, 0);
+                //                             },
+                //                         },
+                //                     },
+                //                 },
+                //             },
+                //         },
+                //         labels: ['Apparel', 'Sports', 'Others'],
+                //         states: {
+                //             hover: {
+                //                 filter: {
+                //                     type: 'none',
+                //                     value: 0.15,
+                //                 }
+                //             },
+                //             active: {
+                //                 filter: {
+                //                     type: 'none',
+                //                     value: 0.15,
+                //                 }
+                //             },
+                //         }
+                //     }
+                // },
             }));
         });
     </script>
