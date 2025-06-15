@@ -20,9 +20,16 @@ class DashboardController extends Controller
             'diamond' => array_fill(1, 12, 0),
             'color_stone' => array_fill(1, 12, 0),
         ];
-
+        $totalPurchase = 0;
         foreach ($monthlyData as $type => $rows) {
+
             foreach ($rows as $row) {
+                $type = match ($type) {
+                    1 => 'gold',
+                    2 => 'diamond',
+                    3 => 'color_stone',
+                };
+                $totalPurchase += (float)$row->total;
                 $chartData[$type][(int)$row->month] = (float)$row->total;
             }
         }
@@ -40,7 +47,7 @@ class DashboardController extends Controller
             ]
         ];
 
-
+        // dd($chartData);
         return view('dashboard', [
             'purchaseChart' => [
                 'labels' => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
@@ -50,7 +57,8 @@ class DashboardController extends Controller
                     ['name' => 'Color Stone', 'data' => array_values($chartData['color_stone'])],
                 ]
             ],
-            'approvalChart' => $approvalChart
+            'approvalChart' => $approvalChart,
+            'totalPurchase' => $totalPurchase
         ]);
     }
 }

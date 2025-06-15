@@ -55,8 +55,8 @@
                             ],
                             data: this.tableData,
                         },
-                        perPage: 10,
-                        perPageSelect: [10, 20, 30, 50, 100],
+                        perPage: 20,
+                        // perPageSelect: [10, 20, 30, 50, 100],
                         columns: [{
                             select: 0,
                             sortable: false,
@@ -66,7 +66,7 @@
                         }],
                         layout: {
                             top: "{search}",
-                            bottom: "{info}{select}{pager}",
+                            // bottom: "{info}{select}{pager}",
                         },
                     });
 
@@ -77,6 +77,9 @@
                         if (selected.length === 0) {
                             e.preventDefault();
                             alert("Select at least one product.");
+                        } else if (selected.length > 20) {
+                            e.preventDefault();
+                            alert("You can only print 20 tag at a time");
                         } else {
                             document.getElementById('product-ids').value = selected.join(',');
                         }

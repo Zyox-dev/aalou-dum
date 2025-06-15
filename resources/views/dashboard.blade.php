@@ -5,8 +5,8 @@
             <div class="grid gap-6 mb-6">
                 <div class="panel h-full xl:col-span-2">
                     <div class="flex items-center dark:text-white-light mb-5">
-                        <h5 class="font-semibold text-lg">Revenue</h5>
-                        <div x-data="dropdown" @click.outside="open = false"
+                        <h5 class="font-semibold text-lg">Purchase</h5>
+                        {{-- <div x-data="dropdown" @click.outside="open = false"
                             class="dropdown ltr:ml-auto rtl:mr-auto">
                             <a href="javascript:;" @click="toggle">
                                 <svg class="w-5 h-5 text-black/70 dark:text-white/70 hover:!text-primary"
@@ -25,10 +25,11 @@
                                 <li><a href="javascript:;" @click="toggle">Monthly</a></li>
                                 <li><a href="javascript:;" @click="toggle">Yearly</a></li>
                             </ul>
-                        </div>
+                        </div> --}}
                     </div>
-                    <p class="text-lg dark:text-white-light/90">Total Profit <span
-                            class="text-primary ml-2">$10,840</span></p>
+                    <p class="text-lg dark:text-white-light/90">Total Purchase <span class="text-primary ml-2">Rs.
+                            {{ \App\Helpers\FormatHelper::formatIndianCurrency($totalPurchase) }}
+                        </span></p>
                     <div class="relative overflow-hidden">
                         <div x-ref="revenueChart" class="bg-white dark:bg-black rounded-lg">
                             <!-- loader -->
