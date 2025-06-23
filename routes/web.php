@@ -3,19 +3,22 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\LabourController;
+use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ApprovalController;
+use App\Http\Controllers\FrontendController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\ApprovalOutController;
 use App\Http\Controllers\CompanyDataController;
 use App\Http\Controllers\MaterialLedgerController;
-use App\Http\Controllers\InvoiceController;
 
-Route::permanentRedirect('/', '/login');
-
+// Route::permanentRedirect('/', '/login');
+Route::get('/', [FrontendController::class, 'index'])->name('home'); // Homepage
+Route::get('/about', [FrontendController::class, 'about'])->name('about'); // About Us
+Route::get('/product/view/{id}', [FrontendController::class, 'show'])->name('product.show'); // Product Details
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
