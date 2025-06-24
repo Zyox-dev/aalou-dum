@@ -286,6 +286,37 @@ class ProductController extends Controller
     {
         $ids = explode(',', $request->product_ids);
         $products = Product::whereIn('id', $ids)->get();
-        return view('products.print-tags', compact('products'));
+
+        $formatted = $products->map(function ($product) {
+            $details = [
+                'product_no' => $product->product_no,
+                'name' => $product->name,
+                'mrp' => $product->mrp,
+            ];
+
+            if ($product->gold_qty > 0) {
+                $details['gold'] = 'G - ' . $product->gold_qty . 'g (' . $product->gold_carat . ')';
+            }
+            if ($product->diamond_qty > 0) {
+                $details['diamond'] = 'D - ' . $product->diamond_qty . 'k';
+            }
+            if ($product->color_stone_qty > 0) {
+                $details['color_stone'] = 'C - ' . $product->color_stone_qty . 'k';
+            }
+
+            return $details;
+        })->values();
+
+        $leftTagProducts = [];
+        $rightTagProducts = [];
+
+        foreach ($formatted as $index => $product) {
+            if ($index % 2 === 0) {
+                $leftTagProducts[] = $product;
+            } else {
+                $rightTagProducts[] = $product;
+            }
+        }
+        return view('products.print-tags', compact('leftTagProducts', 'rightTagProducts'));
     }
 }

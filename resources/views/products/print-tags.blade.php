@@ -125,39 +125,37 @@
 <body>
     <div class="page">
         <div class="left-column">
-            <?php for ($i = 0; $i < 10; $i++): ?>
-            <div class="left-tag">
-                <div class="tag-section left-half flex-column">
-                    {{-- Left Info  --}}
-                    <div class="tag-content">345662</div>
-                    <div class="tag-content">Ring</div>
-                    <div class="tag-content">₹10000</div>
+            @foreach ($leftTagProducts as $product)
+                <div class="left-tag">
+                    <div class="tag-section left-half flex-column">
+                        <div class="tag-content">{{ $product['product_no'] }}</div>
+                        <div class="tag-content">{{ $product['name'] }}</div>
+                        <div class="tag-content">₹{{ $product['mrp'] }}</div>
+                    </div>
+                    <div class="tag-section right-half flex-column">
+                        <div class="tag-content">{{ $product['diamong'] ?? '' }}</div>
+                        <div class="tag-content">{{ $product['color_stone'] ?? '' }}</div>
+                        <div class="tag-content">{{ $product['gold'] ?? '' }}</div>
+                    </div>
                 </div>
-                <div class="tag-section right-half flex-column">
-                    <div class="tag-content">D - 10k</div>
-                    <div class="tag-content">C - 10k</div>
-                    <div class="tag-content">G - 10g(18k)</div>
-                </div>
-            </div>
-            <?php endfor; ?>
+            @endforeach
         </div>
 
         <div class="right-column">
-            <?php for ($i = 0; $i < 10; $i++): ?>
-            <div class="right-tag">
-                <div class="tag-section left-half flex-column">
-                    {{-- Right Info  --}}
-                    <div class="tag-content">345662</div>
-                    <div class="tag-content">Ring</div>
-                    <div class="tag-content">₹10000</div>
+            @foreach ($rightTagProducts as $product)
+                <div class="right-tag">
+                    <div class="tag-section left-half flex-column">
+                        <div class="tag-content">{{ $product['product_no'] }}</div>
+                        <div class="tag-content">{{ $product['name'] }}</div>
+                        <div class="tag-content">₹{{ $product['mrp'] }}</div>
+                    </div>
+                    <div class="tag-section right-half flex-column">
+                        <div class="tag-content">{{ $product['diamong'] ?? '' }}</div>
+                        <div class="tag-content">{{ $product['color_stone'] ?? '' }}</div>
+                        <div class="tag-content">{{ $product['gold'] ?? '' }}</div>
+                    </div>
                 </div>
-                <div class="tag-section right-half flex-column">
-                    <div class="tag-content">D - 10k</div>
-                    <div class="tag-content">C - 10k</div>
-                    <div class="tag-content">G - 10g(18k)</div>
-                </div>
-            </div>
-            <?php endfor; ?>
+            @endforeach
         </div>
     </div>
 </body>
